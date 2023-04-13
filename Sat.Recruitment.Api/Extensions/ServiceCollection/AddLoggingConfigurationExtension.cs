@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Sat.Recruitment.Api.Extensions
+namespace Sat.Recruitment.Api.Extensions.ServiceCollection
 {
     public static class AddLoggingConfigurationExtension
     {

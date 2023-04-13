@@ -1,6 +1,6 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace Sat.Recruitment.Api.Domain
@@ -43,43 +43,58 @@ namespace Sat.Recruitment.Api.Domain
             errors = sbErrors.ToString();
         }
 
-        public void ApplyGif() {
+        public string NormalizedEmail
+        {
+            get
+            {
+                var aux = this.Email.Split('@', StringSplitOptions.RemoveEmptyEntries);
+
+                var atIndex = aux[0].IndexOf("+", StringComparison.Ordinal);
+
+                aux[0] = atIndex < 0 ? aux[0].Replace(".", "") : aux[0].Replace(".", "").Remove(atIndex);
+
+                return string.Join("@", new string[] { aux[0], aux[1] });
+            }
+        }
+
+        public void ApplyGif()
+        {
 
             var percentage = 0m;
             switch (this.UserType)
             {
                 case UserType.Normal:
-                {
-                    if (this.Money > 100)
                     {
-                        //If new user is normal and has more than USD100
-                        percentage = 0.12m;
-                    }
-                    if (this.Money <= 100) //TODO verify equals to 100 condition
-                    {
-                        if (this.Money > 10)
+                        if (this.Money > 100)
                         {
-                            percentage = 0.8m;
+                            //If new user is normal and has more than USD100
+                            percentage = 0.12m;
                         }
+                        if (this.Money <= 100) //TODO verify equals to 100 condition
+                        {
+                            if (this.Money > 10)
+                            {
+                                percentage = 0.8m;
+                            }
+                        }
+                        break;
                     }
-                    break;
-                }
                 case UserType.SuperUser:
-                {
-                    if (this.Money > 100)
                     {
-                        percentage = 0.20m;
+                        if (this.Money > 100)
+                        {
+                            percentage = 0.20m;
+                        }
+                        break;
                     }
-                    break;
-                }
                 case UserType.Premium:
-                {
-                    if (this.Money > 100)
                     {
-                        percentage = 1;
+                        if (this.Money > 100)
+                        {
+                            percentage = 1;
+                        }
+                        break;
                     }
-                    break;
-                }
             }
             this.Money *= (1 + percentage);
         }
