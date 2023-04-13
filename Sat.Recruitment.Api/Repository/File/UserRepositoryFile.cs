@@ -1,4 +1,5 @@
-﻿using Sat.Recruitment.Api.Domain;
+﻿using Microsoft.Extensions.Logging;
+using Sat.Recruitment.Api.Domain;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,12 +11,14 @@ namespace Sat.Recruitment.Api.Repository.File
 {
     public class UserRepositoryFile : IUserRepository
     {
-        private List<User> _users;
+        private readonly ILogger<UserRepositoryFile> _logger;
         private readonly string _path;
 
-        public UserRepositoryFile(string path)
+        private List<User> _users;
+        public UserRepositoryFile(ILogger<UserRepositoryFile> logger, string path)
         {
             this._path = Path.Combine(Directory.GetCurrentDirectory(), path);
+            this._logger = logger;
         }
 
         public async Task<User> CreateAsync(User newUser)
@@ -24,7 +27,7 @@ namespace Sat.Recruitment.Api.Repository.File
 
             if (isDuplicated)
             {
-                Debug.WriteLine("User is duplicated");
+                this._logger.LogDebug("User is duplicated");
                 throw new DuplicateUserException();
             }
 

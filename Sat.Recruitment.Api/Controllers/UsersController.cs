@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Sat.Recruitment.Api.Domain;
 using Sat.Recruitment.Api.Repository;
 using System;
@@ -17,10 +18,14 @@ namespace Sat.Recruitment.Api.Controllers
     [Route("[controller]")]
     public partial class UsersController : ControllerBase
     {
+        private readonly ILogger<UsersController> _logger;
         private readonly IUserRepository _userRepository;
 
-        public UsersController(IUserRepository userRepository)
+        public UsersController(
+            ILogger<UsersController> logger,
+            IUserRepository userRepository)
         {
+            this._logger = logger;
             this._userRepository = userRepository;
         }
 
@@ -48,16 +53,17 @@ namespace Sat.Recruitment.Api.Controllers
             }
             catch (DuplicateUserException e)
             {
-                Debug.WriteLine(e.Message);
+                var message = e.Message;
+                this._logger.LogDebug(message);
 
                 return new Result()
                 {
                     IsSuccess = false,
-                    Errors = e.Message
+                    Errors = message
                 };
             }
 
-            Debug.WriteLine("User Created");
+            this._logger.LogDebug("User Created");
 
             return new Result()
             {

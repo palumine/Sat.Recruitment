@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Sat.Recruitment.Api.Extensions.ServiceCollection;
 using System.Diagnostics.CodeAnalysis;
 
@@ -11,9 +12,12 @@ namespace Sat.Recruitment.Api
     [ExcludeFromCodeCoverage]
     public class Startup
     {
+        private readonly ILoggerFactory _loggerFactory;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            this._loggerFactory = new LoggerFactory();
         }
 
         public IConfiguration Configuration { get; }
@@ -21,12 +25,11 @@ namespace Sat.Recruitment.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddRepositories();
+            services.AddRepositories(_loggerFactory);
             services.AddControllers();
 
             services.AddLoggingConfiguration();
             services.AddSwaggerGen();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
