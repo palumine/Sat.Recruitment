@@ -1,4 +1,5 @@
-﻿using Sat.Recruitment.Api.Domain;
+﻿using Microsoft.Extensions.Logging;
+using Sat.Recruitment.Api.Domain;
 using Sat.Recruitment.Api.Repository;
 using Sat.Recruitment.Api.Repository.File;
 using System;
@@ -11,10 +12,14 @@ namespace Sat.Recruitment.Test.Repositories
 {
     public class UserRepositoryFileTest
     {
+        private readonly LoggerFactory _loggerFacotry;
+
         public UserRepositoryFileTest()
         {
             var path = Path.Combine(Directory.GetCurrentDirectory(), @"Repositories\TestFiles\testFile.txt");
             File.WriteAllText(path, String.Empty);
+
+            this._loggerFacotry = new LoggerFactory();
         }
 
         [Fact]
@@ -22,11 +27,11 @@ namespace Sat.Recruitment.Test.Repositories
         {
             var user = new User("Juan", "Juan @marmol.com", "Peru 2464", "+5491154762312", UserType.Normal, 1234m);
 
-            var repository = new UserRepositoryFile(@"Repositories\TestFiles\testFile.txt");
+            var repository = new UserRepositoryFile(_loggerFacotry.CreateLogger<UserRepositoryFile>(), @"Repositories\TestFiles\testFile.txt");
 
             await repository.CreateAsync(user);
 
-            repository = new UserRepositoryFile(@"Repositories\TestFiles\testFile.txt");
+            repository = new UserRepositoryFile(_loggerFacotry.CreateLogger<UserRepositoryFile>(), @"Repositories\TestFiles\testFile.txt");
             var users = await repository.GetAllAsync();
 
             Assert.NotEmpty(users);
@@ -46,7 +51,7 @@ namespace Sat.Recruitment.Test.Repositories
         {
             var user = new User("Juan", "Juan @marmol.com", "Peru 2464", "+5491154762312", UserType.Normal, 1234m);
             
-            var repository = new UserRepositoryFile(@"Repositories\TestFiles\defaultFile.txt");
+            var repository = new UserRepositoryFile(_loggerFacotry.CreateLogger<UserRepositoryFile>(), @"Repositories\TestFiles\defaultFile.txt");
 
             await Assert.ThrowsAsync<DuplicateUserException>(() => repository.CreateAsync(user));
         }
@@ -54,7 +59,7 @@ namespace Sat.Recruitment.Test.Repositories
         [Fact]
         public async void CreateUserAsync_ShouldGetAllUsersFromRepository()
         {
-            var repository = new UserRepositoryFile(@"Repositories\TestFiles\defaultFile.txt");
+            var repository = new UserRepositoryFile(_loggerFacotry.CreateLogger<UserRepositoryFile>(), @"Repositories\TestFiles\defaultFile.txt");
 
             var users = await repository.GetAllAsync();
 
