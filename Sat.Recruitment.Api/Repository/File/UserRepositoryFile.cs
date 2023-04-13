@@ -61,6 +61,7 @@ namespace Sat.Recruitment.Api.Repository.File
                 newUser.Money.ToString() });
 
             await sw.WriteAsync(strUser + sw.NewLine);
+            sw.Close();
         }
 
         public async Task<IEnumerable<User>> GetAllAsync() => await this.GetUsers();
@@ -88,14 +89,14 @@ namespace Sat.Recruitment.Api.Repository.File
             {
                 var line = await reader.ReadLineAsync();
                 var user = new User
-                {
-                    Name = line.Split(',')[0].ToString(),
-                    Email = line.Split(',')[1].ToString(),
-                    Phone = line.Split(',')[2].ToString(),
-                    Address = line.Split(',')[3].ToString(),
-                    UserType = Enum.Parse<UserType>(line.Split(',')[4].ToString()),
-                    Money = decimal.Parse(line.Split(',')[5].ToString()),
-                };
+                (
+                    line.Split(',')[0].ToString(),
+                    line.Split(',')[1].ToString(),
+                    line.Split(',')[3].ToString(),
+                    line.Split(',')[2].ToString(),
+                    Enum.Parse<UserType>(line.Split(',')[4].ToString()),
+                    decimal.Parse(line.Split(',')[5].ToString())
+                );
                 this._users.Add(user);
             }
             reader.Close();

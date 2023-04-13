@@ -5,12 +5,12 @@ using Xunit;
 namespace Sat.Recruitment.Test
 {
     [CollectionDefinition("Tests", DisableParallelization = true)]
-    public class UnitTest1
+    public class UsersControllerTest
     {
         [Fact]
-        public void Test1()
+        public void CreateUser_ShouldReturnSuccessTrue()
         {
-            var userController = new UsersController(new UserRepositoryFile(@"\TestFiles\defaultFile.txt"));
+            var userController = new UsersController(new UserRepositoryFile(@"Repositories\TestFiles\defaultFile.txt"));
 
             var result = userController.CreateUser("Mike", "mike@gmail.com", "Av. Juan G", "+349 1122354215", "Normal", "124").Result;
 
@@ -20,15 +20,15 @@ namespace Sat.Recruitment.Test
         }
 
         [Fact]
-        public void Test2()
+        public void CreateUser_ShouldReturnDuplicateUser()
         {
-            var userController = new UsersController(new UserRepositoryFile(@"\TestFiles\defaultFile.txt"));
+            var userController = new UsersController(new UserRepositoryFile(@"Repositories\TestFiles\defaultFile.txt"));
 
             var result = userController.CreateUser("Agustina", "Agustina@gmail.com", "Av. Juan G", "+349 1122354215", "Normal", "124").Result;
 
 
             Assert.False(result.IsSuccess);
-            Assert.Equal("The user is duplicated", result.Errors);
+            Assert.Equal("User is duplicated", result.Errors);
         }
     }
 }

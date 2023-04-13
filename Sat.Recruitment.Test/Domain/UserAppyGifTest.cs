@@ -21,11 +21,9 @@ namespace Sat.Recruitment.Test.Domain
         public void ApplyGif_ShouldApplyGifByUserTypeCorrectly(UserType userType, string money, string moneyWithGifApplied)
         {
             var moneyPlusGif = Convert.ToDecimal(moneyWithGifApplied);
-            var user = new User { UserType = userType, Money = Convert.ToDecimal(money) };
+            var user = new User(string.Empty, string.Empty, string.Empty, string.Empty, userType, Convert.ToDecimal(money));
 
-            user.ApplyGif();
-
-            Assert.Equal(moneyPlusGif, user.Money);
+            Assert.Equal(moneyPlusGif, user.MoneyPlusGif);
         }
 
     }

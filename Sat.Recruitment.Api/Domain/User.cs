@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Server.IIS.Core;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
@@ -22,6 +23,25 @@ namespace Sat.Recruitment.Api.Domain
         public UserType UserType { get; set; }
 
         public decimal Money { get; set; }
+
+
+        private readonly GifCalculator _gifCalulator;
+        public decimal MoneyPlusGif 
+        { 
+            get { return this._gifCalulator.Calculate(this.Money); } 
+        }
+
+        public User(string name, string email, string address, string phone, UserType userType, decimal money)
+        {
+            Name = name;
+            Email = email;
+            Address = address;
+            Phone = phone;
+            UserType = userType;
+            Money = money;
+
+            this._gifCalulator = (new GifCalcuatorFactory()).GetCalculator(userType);
+        }
 
         public void ValidateErrors(ref string errors)
         {
@@ -55,48 +75,6 @@ namespace Sat.Recruitment.Api.Domain
 
                 return string.Join("@", new string[] { aux[0], aux[1] });
             }
-        }
-
-        public void ApplyGif()
-        {
-
-            var percentage = 0m;
-            switch (this.UserType)
-            {
-                case UserType.Normal:
-                    {
-                        if (this.Money > 100)
-                        {
-                            //If new user is normal and has more than USD100
-                            percentage = 0.12m;
-                        }
-                        if (this.Money <= 100) //TODO verify equals to 100 condition
-                        {
-                            if (this.Money > 10)
-                            {
-                                percentage = 0.8m;
-                            }
-                        }
-                        break;
-                    }
-                case UserType.SuperUser:
-                    {
-                        if (this.Money > 100)
-                        {
-                            percentage = 0.20m;
-                        }
-                        break;
-                    }
-                case UserType.Premium:
-                    {
-                        if (this.Money > 100)
-                        {
-                            percentage = 1;
-                        }
-                        break;
-                    }
-            }
-            this.Money *= (1 + percentage);
         }
     }
 }

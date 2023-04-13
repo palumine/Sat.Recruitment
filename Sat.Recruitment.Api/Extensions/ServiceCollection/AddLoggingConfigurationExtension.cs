@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Sat.Recruitment.Api.Extensions.ServiceCollection
 {
+    [ExcludeFromCodeCoverage]
     public static class AddLoggingConfigurationExtension
     {
         public static void AddLoggingConfiguration(this IServiceCollection services)

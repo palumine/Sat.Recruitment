@@ -30,15 +30,8 @@ namespace Sat.Recruitment.Api.Controllers
         {
             var errors = "";
 
-            var newUser = new User
-            {
-                Name = name,
-                Email = email,
-                Address = address,
-                Phone = phone,
-                UserType = Enum.Parse<UserType>(userType),
-                Money = decimal.Parse(money)
-            };
+            var newUser = new User(name, email, address, phone, 
+                Enum.Parse<UserType>(userType), decimal.Parse(money));
 
             newUser.ValidateErrors(ref errors);
 
@@ -48,9 +41,6 @@ namespace Sat.Recruitment.Api.Controllers
                     IsSuccess = false,
                     Errors = errors
                 };
-
-
-            newUser.ApplyGif();
 
             try
             {

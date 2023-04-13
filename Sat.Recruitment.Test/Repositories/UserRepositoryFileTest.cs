@@ -20,8 +20,7 @@ namespace Sat.Recruitment.Test.Repositories
         [Fact]
         public async Task CreateUserAsync_ShouldAddUserToRepository()
         {
-            var user = new User { Name = "Juan", Email = "Juan @marmol.com", Phone = "+5491154762312", Address = "Peru 2464", UserType = UserType.Normal, Money = 1234m };
-            user.ApplyGif();
+            var user = new User("Juan", "Juan @marmol.com", "Peru 2464", "+5491154762312", UserType.Normal, 1234m);
 
             var repository = new UserRepositoryFile(@"Repositories\TestFiles\testFile.txt");
 
@@ -45,9 +44,8 @@ namespace Sat.Recruitment.Test.Repositories
         [Fact]
         public async void CreateUserAsync_ShouldThrowDuplicateUserException()
         {
-            var user = new User { Name = "Juan", Email = "Juan @marmol.com", Phone = "+5491154762312", Address = "Peru 2464", UserType = UserType.Normal, Money = 1234m };
-            user.ApplyGif();
-
+            var user = new User("Juan", "Juan @marmol.com", "Peru 2464", "+5491154762312", UserType.Normal, 1234m);
+            
             var repository = new UserRepositoryFile(@"Repositories\TestFiles\defaultFile.txt");
 
             await Assert.ThrowsAsync<DuplicateUserException>(() => repository.CreateAsync(user));
@@ -56,9 +54,6 @@ namespace Sat.Recruitment.Test.Repositories
         [Fact]
         public async void CreateUserAsync_ShouldGetAllUsersFromRepository()
         {
-            var user = new User { Name = "Juan", Email = "Juan @marmol.com", Phone = "+5491154762312", Address = "Peru 2464", UserType = UserType.Normal, Money = 1234m };
-            user.ApplyGif();
-
             var repository = new UserRepositoryFile(@"Repositories\TestFiles\defaultFile.txt");
 
             var users = await repository.GetAllAsync();
