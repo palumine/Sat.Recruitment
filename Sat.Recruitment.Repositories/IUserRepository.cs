@@ -1,9 +1,8 @@
-﻿using Sat.Recruitment.Api.Domain;
-using System;
+﻿using Sat.Recruitment.Domain;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Sat.Recruitment.Api.Repository
+namespace Sat.Recruitment.Repositories
 {
     public interface IUserRepository
     {

@@ -1,20 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
 using Sat.Recruitment.Domain;
-using Sat.Recruitment.Repositories;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Sat.Recruitment.Api.Repository.File
+namespace Sat.Recruitment.Repositories.File
 {
     public class UserRepositoryFile : IUserRepository
     {
         private readonly ILogger<UserRepositoryFile> _logger;
         private readonly string _path;
 
-        private List<User> _users;
+        private readonly List<User> _users = new();
         public UserRepositoryFile(ILogger<UserRepositoryFile> logger, string path)
         {
             this._path = Path.Combine(Directory.GetCurrentDirectory(), path);
@@ -42,8 +36,9 @@ namespace Sat.Recruitment.Api.Repository.File
         {
             var users = await this.GetUsers();
             return users.Any(user =>
-                    (user.Email == newUser.NormalizedEmail || user.Phone == newUser.Phone) ||
-                    (user.Name == newUser.Name && user.Address == newUser.Address));
+                    (user.Email == newUser.Email || user.Phone == newUser.Phone) ||
+                    (user.Name == newUser.NormalizedEmail && user.Address == newUser.Address)
+                    );
         }
 
         private async Task SaveToFile(User newUser)
@@ -74,7 +69,7 @@ namespace Sat.Recruitment.Api.Repository.File
             {
                 await this.LoadUsersFromFile();
             }
-            return this._users;
+            return this._users!;
         }
 
         private async Task LoadUsersFromFile()
@@ -84,8 +79,6 @@ namespace Sat.Recruitment.Api.Repository.File
             using var fileStream = new FileStream(path, FileMode.Open);
 
             using var reader = new StreamReader(fileStream);
-
-            this._users = new List<User>();
 
             while (reader.Peek() >= 0)
             {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
-using Sat.Recruitment.Api.Domain;
-using Sat.Recruitment.Api.Repository;
 using Sat.Recruitment.Api.Repository.File;
+using Sat.Recruitment.Domain;
+using Sat.Recruitment.Repositories;
 using System;
 using System.IO;
 using System.Linq;
@@ -10,16 +10,17 @@ using Xunit;
 
 namespace Sat.Recruitment.Test.Repositories
 {
+    [CollectionDefinition("FileTest", DisableParallelization = true)]
     public class UserRepositoryFileTest
     {
-        private readonly LoggerFactory _loggerFacotry;
+        private readonly ILogger<UserRepositoryFile> _logger;
 
         public UserRepositoryFileTest()
         {
             var path = Path.Combine(Directory.GetCurrentDirectory(), @"Repositories\TestFiles\testFile.txt");
             File.WriteAllText(path, String.Empty);
 
-            this._loggerFacotry = new LoggerFactory();
+            this._logger = new LoggerFactory().CreateLogger<UserRepositoryFile>();
         }
 
         [Fact]
@@ -27,11 +28,11 @@ namespace Sat.Recruitment.Test.Repositories
         {
             var user = new User("Juan", "Juan @marmol.com", "Peru 2464", "+5491154762312", UserType.Normal, 1234m);
 
-            var repository = new UserRepositoryFile(_loggerFacotry.CreateLogger<UserRepositoryFile>(), @"Repositories\TestFiles\testFile.txt");
+            var repository = new UserRepositoryFile(this._logger, @"Repositories\TestFiles\testFile.txt");
 
             await repository.CreateAsync(user);
 
-            repository = new UserRepositoryFile(_loggerFacotry.CreateLogger<UserRepositoryFile>(), @"Repositories\TestFiles\testFile.txt");
+            repository = new UserRepositoryFile(this._logger, @"Repositories\TestFiles\testFile.txt");
             var users = await repository.GetAllAsync();
 
             Assert.NotEmpty(users);
@@ -50,23 +51,23 @@ namespace Sat.Recruitment.Test.Repositories
         public async void CreateUserAsync_ShouldThrowDuplicateUserException()
         {
             var user = new User("Juan", "Juan @marmol.com", "Peru 2464", "+5491154762312", UserType.Normal, 1234m);
-            
-            var repository = new UserRepositoryFile(_loggerFacotry.CreateLogger<UserRepositoryFile>(), @"Repositories\TestFiles\defaultFile.txt");
+
+            var repository = new UserRepositoryFile(this._logger, @"Repositories\TestFiles\defaultFile.txt");
 
             await Assert.ThrowsAsync<DuplicateUserException>(() => repository.CreateAsync(user));
         }
 
         [Fact]
-        public async void CreateUserAsync_ShouldGetAllUsersFromRepository()
+        public async void GetAllAsync_ShouldGetAllUsersFromRepository()
         {
-            var repository = new UserRepositoryFile(_loggerFacotry.CreateLogger<UserRepositoryFile>(), @"Repositories\TestFiles\defaultFile.txt");
+            var repository = new UserRepositoryFile(this._logger, @"Repositories\TestFiles\defaultFile.txt");
 
             var users = await repository.GetAllAsync();
 
             Assert.NotEmpty(users);
-            Assert.Collection(users, item => Assert.Contains(item.Name, "Juan"),
-                                     item => Assert.Contains(item.Name, "Franco"),
-                                     item => Assert.Contains(item.Name, "Agustina"));
+            Assert.Contains(users, item => item.Name == "Juan");
+            Assert.Contains(users, item => item.Name == "Franco");
+            Assert.Contains(users, item => item.Name == "Agustina");
 
         }
 

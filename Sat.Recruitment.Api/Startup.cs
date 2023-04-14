@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Sat.Recruitment.Api.Extensions.ServiceCollection;
+using Sat.Recruitment.Repositories.EF;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Sat.Recruitment.Api
@@ -33,11 +35,12 @@ namespace Sat.Recruitment.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, SatRecruitmentDBContext dbContext)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                dbContext.Database.EnsureCreated();
             }
 
             app.UseHttpLogging();
@@ -53,8 +56,7 @@ namespace Sat.Recruitment.Api
             app.UseRouting();
 
             app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
+                        app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });

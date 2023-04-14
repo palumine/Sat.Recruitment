@@ -1,4 +1,4 @@
-﻿using Sat.Recruitment.Api.Domain;
+﻿using Sat.Recruitment.Domain;
 using System;
 using Xunit;
 

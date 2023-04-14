@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Server.IIS.Core;
-using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
-namespace Sat.Recruitment.Api.Domain
+namespace Sat.Recruitment.Domain
 {
     public class User
     {
@@ -26,9 +24,9 @@ namespace Sat.Recruitment.Api.Domain
 
 
         private readonly GifCalculator _gifCalulator;
-        public decimal MoneyPlusGif 
-        { 
-            get { return this._gifCalulator.Calculate(this.Money); } 
+        public decimal MoneyPlusGif
+        {
+            get { return this._gifCalulator.Calculate(this.Money); }
         }
 
         public User(string name, string email, string address, string phone, UserType userType, decimal money)

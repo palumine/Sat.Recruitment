@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sat.Recruitment.Api.Repository
+namespace Sat.Recruitment.Repositories
 {
     public class DuplicateUserException : Exception
     {
